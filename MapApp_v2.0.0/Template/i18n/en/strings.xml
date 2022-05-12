@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	<string name="appName">Map App</string>
+	<string name="locations">Locations</string>
+	<string name="map">Map</string>
+	<string name="info">Info</string>
+	<string name="browser">Browser</string>
+
+	<string name="directions">Directions</string>
+	<string name="call">Call</string>
+	<string name="save">Save</string>
+	<string name="mail">Mail</string>
+
+	<string name="shareEmailSubject">Map App Shared Location</string>
+	<string name="shareEmailBody">Checkout this location from Map App...</string>
+	<string name="locationPurpose">Get Current Location</string>
+	<string name="contactAdded">added to your contacts.</string>
+
+	<!-- Error Messages -->
+	<string name="contactsError">Can not save to contacts</string>
+	<string name="directionsError">Can not open maps app</string>
+	<string name="phoneError">Can not open phone app</string>
+	<string name="googleMapError">Can not load Google Maps. Please check your connection.</string>
+	<string name="locationDataError">Can not load locations. Please check your connection.</string>
+	<string name="enableLocation">Please enable location services</string>
+	<string name="userDisabledLocation">You have disallowed Map App from running geolocation services.</string>
+	<string name="systemDisabledLocation">Your system has disallowed Map from running geolocation services.</string>
+	<string name="unknownError">Unknown error</string>
+</resources>

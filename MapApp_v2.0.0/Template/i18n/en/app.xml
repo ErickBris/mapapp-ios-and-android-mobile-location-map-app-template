@@ -1,0 +1,4 @@
+<resources>
+    <string name="appname">Map App</string>
+    <string name="NSLocationWhenInUseUsageDescription">Get Current Location</string>
+</resources>

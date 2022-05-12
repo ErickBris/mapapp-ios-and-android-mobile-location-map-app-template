@@ -1,0 +1,9 @@
+{
+	"bundledCacheManager" : {
+		"offline/locations.json" : {
+			"path" : "/data/locations.json",
+			"ttl" : 0,
+			"type" : "File"
+		}
+	}
+}

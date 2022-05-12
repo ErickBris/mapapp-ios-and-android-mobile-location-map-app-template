@@ -1,0 +1,26 @@
+{
+	"isSimulator" : true,
+
+	"LocationURL" : "",
+
+	"theme" : "default",
+
+	"FontIconsPath" : "/font_icons/",
+
+	"lat" : 40.7315,
+	"lon" : -73.9969,
+
+	"GPS_Purpose" : "Find Nearest Store",
+
+	"Use_Miles" : true,
+
+	"InfoURL" : "http://www.envato.com/sites",
+
+	"GoogleMapAPIKey" : "",
+	"MapZoom" : 13,
+	"MapType" : "ROADMAP",
+
+	"AdMob" : false,
+	"AdMobAdUnitId" : "",
+	"AdMobKeywords" : ""
+}

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+
+<style type="text/css">
+	html { height: 100% }
+	body { height: 100%; margin: 0; padding: 0; }
+	#map-canvas { height: 100%; }
+	#info { font-weight: bold; font-size:16px; margin : 0 5px; width:100%; }
+</style>
+
+<script type="text/javascript">
+	var
+		markerIndex = 0,
+		scriptLoaded = false,
+		map, info, config, markers,
+		thePanorama, locationMarker;
+
+	window.onerror = function(errMsg, url, lineNumber){
+		Ti.API.error("Line " + lineNumber + ": " + errMsg + " (" + url + ")");
+	}
+
+	function initialize() {
+		var mapOptions = {
+				center : new google.maps.LatLng(config.lat, config.lon),
+				zoom : config.zoom,
+				mapTypeId : google.maps.MapTypeId[config.mapType],
+				disableDefaultUI : true,
+				zoomControlOptions : {
+					position : google.maps.ControlPosition.LEFT_TOP
+				}
+			};
+
+		map = new google.maps.Map(
+			document.getElementById("map-canvas"),
+			mapOptions
+		);
+
+		locationMarker = new google.maps.Marker({
+			clickable : false,
+			icon : new google.maps.MarkerImage(
+				"http://maps.gstatic.com/mapfiles/mobile/mobileimgs2.png",
+				new google.maps.Size(22,22),
+				new google.maps.Point(0,18),
+				new google.maps.Point(11,11)
+			),
+			map : map
+		});
+
+		locationMarker.setPosition(new google.maps.LatLng(config.lat, config.lon));
+
+		if(config.mapOffset){
+			map.panBy(0, config.mapOffset);
+		}
+
+		info = new google.maps.InfoWindow();
+
+		thePanorama = map.getStreetView();
+
+		for(var x=0, len=markers.length;x<len;x++){
+			setTimeout(function(){
+					addMaker();
+				},
+				x * 200
+			);
+		}
+
+		google.maps.event.addListener(thePanorama, 'visible_changed', function() {
+			if (thePanorama.getVisible()) {
+				Ti.App.fireEvent(
+					"GoogleMapHTML::STREET_VIEW_VISIBLE",
+					{ visible : true }
+				);
+			}
+			else {
+				Ti.App.fireEvent(
+					"GoogleMapHTML::STREET_VIEW_VISIBLE",
+					{ visible : false }
+				);
+			}
+		});
+
+	}
+
+	function addMaker(loc){
+		var loc = markers[markerIndex],
+		    aMarker = new google.maps.Marker({
+				position : new google.maps.LatLng(loc.latitude, loc.longitude),
+				map : map,
+				title : loc.title,
+				draggable : false,
+				animation : google.maps.Animation.DROP
+			});
+
+		google.maps.event.addListener(aMarker, 'click', function() {
+			map.panTo(aMarker.getPosition());
+			info.setContent(
+				"<div id='info' onClick='loadLocation(this)' data-location='" +
+				JSON.stringify(loc) +
+				"'>" +
+				loc.title +
+				"</div>"
+			);
+			info.open(map, aMarker);
+		});
+
+		markerIndex++;
+	}
+
+	function loadLocation(obj){
+		Ti.App.fireEvent(
+			"GoogleMapHTML::LOAD_LOCATION_DETAIL",
+			{ location : JSON.parse(obj.getAttribute('data-location')) }
+		);
+	}
+
+	function loadScript() {
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = 'https://maps.googleapis.com/maps/api/js?key=' + config.apiKey + '&sensor=false&callback=initialize';
+		document.body.appendChild(script);
+	}
+
+	Ti.App.addEventListener("GoogleMap::LOCATION_MARKERS_READY", function(e) {
+		Ti.API.info("GoogleMap::LOCATION_MARKERS_READY handled!");
+		markers = e.markers;
+	});
+
+	Ti.App.addEventListener("GoogleMap::CURRENT_LOCATION_READY", function(e) {
+		Ti.API.info("GoogleMap::CURRENT_LOCATION_READY handled!");
+		config = e;
+		if(!scriptLoaded){
+			loadScript();
+			scriptLoaded = true;
+		}
+		else{
+			markerIndex = 0;
+			map.panTo(new google.maps.LatLng(config.lat, config.lon));
+		}
+	});
+
+	Ti.App.addEventListener("GoogleMap::CLOSE_STREET_VIEW", function(e) {
+		Ti.API.info("GoogleMap::CLOSE_STREET_VIEW");
+		thePanorama.setVisible(false);
+	});
+
+	Ti.App.addEventListener("GoogleMap::PAN_TO_LOCATION", function(e) {
+		if(e.lat && e.lon){
+			map.panTo(new google.maps.LatLng(e.lat, e.lon));
+			if(e.mapOffset){
+				map.panBy(0, (e.mapOffset));
+			}
+		}
+		else{
+			return;
+		}
+	});
+</script>
+</head>
+<body>
+	<div id="map-canvas"></div>
+</body>
+</html>
